@@ -1,0 +1,632 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="AccountLogin.lua"/>
+	
+	<Button name="AccountNameButton" virtual="true">
+		<Size x="250" y="20"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentBGHighlight" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD" hidden="true">
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="-20" y="0"/>
+							</Offset>
+						</Anchor>
+						<Anchor point="RIGHT">
+							<Offset>
+								<AbsDimension x="-10" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.BG_Highlight = _G[self:GetName().."BGHighlight"];
+			</OnLoad>
+		</Scripts>
+		<ButtonText>
+			<Anchors>
+				<Anchor point="LEFT">
+					<Offset>
+						<AbsDimension x="2" y="2"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GlueFontNormalSmall"/>
+		<HighlightFont style="GlueFontHighlightSmall"/>
+		<DisabledFont style="GlueFontDisableSmall"/>
+		<PushedTexture name="$parentPushedTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="LEFT">
+					<Offset>
+						<AbsDimension x="-20" y="0"/>
+					</Offset>
+				</Anchor>
+				<Anchor point="RIGHT">
+					<Offset>
+						<AbsDimension x="-10" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</PushedTexture>
+	</Button>
+
+	<Frame name="AccountLoginUIResetFrame" toplevel="true" frameStrata="DIALOG" hidden="true">
+		<Size x="1" y="1"/>
+		<Anchors>
+			<Anchor point="TOP"/>
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="AccountLoginUIResetWarning" inherits="GlueFontRedLarge" text="RESET_WARNING">
+					<Size x="400" y="48"/>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset>
+								<AbsDimension x="0" y="-32"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<ModelFFX name="AccountLogin" toplevel="true" parent="GlueParent" setAllPoints="true" enableKeyboard="true" hidden="true" fogNear="0" fogFar="1200" glow="0.08">
+		<Frames>
+			<Frame name="AccountLoginUI" setAllPoints="true">
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="WorldOfWarcraftRating" hidden="true">
+							<Size>
+								<AbsDimension x="128" y="128"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="0" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<EditBox name="AccountLoginAccountEdit" letters="320">
+						<Size x="200" y="37"/>
+						<Anchors>
+							<Anchor point="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="345"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString name="$parentLabel" inherits="GlueFontNormal" justifyH="CENTER" text="ACCOUNT_NAME">
+									<Size>
+										<AbsDimension x="600" y="64"/>
+									</Size>
+									<Anchors>
+										<Anchor point="BOTTOM" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="-23"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="$parentFill" inherits="GlueFontDisableSmall" justifyH="LEFT" justifyV="MIDDLE" text="ENTER_EMAIL">
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="CENTER">
+											<Offset>
+												<AbsDimension x="0" y="3"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Glues\Common\Glue-Tooltip-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="10" right="5" top="4" bottom="9"/>
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+						</Backdrop>
+						<Scripts>
+							<OnTabPressed>
+								AccountLogin_FocusPassword();
+							</OnTabPressed>
+							<OnEscapePressed>
+								AccountLogin_Exit();
+							</OnEscapePressed>
+							<OnEnterPressed>
+								AccountLogin_Login();
+							</OnEnterPressed>
+							<OnEditFocusLost>
+								self:HighlightText(0, 0);
+							</OnEditFocusLost>
+							<OnEditFocusGained>
+								self:HighlightText();
+							</OnEditFocusGained>
+							<OnTextChanged>
+								local accountName = GetSavedAccountName();
+								if ( accountName ~= "" and accountName ~= self:GetText() ) then
+									SetSavedAccountName("");
+									AccountLoginSaveAccountName:SetChecked(0);
+								end
+								if ( self:GetText() ~= "" ) then
+									AccountLoginAccountEditFill:Hide();
+								else
+									AccountLoginAccountEditFill:Show();
+								end
+							</OnTextChanged>
+						</Scripts>
+						<FontString inherits="GlueEditBoxFont"/>
+						<TextInsets>
+							<AbsInset left="12" right="5" bottom="5"/>
+						</TextInsets>
+					</EditBox>
+					<EditBox name="AccountLoginPasswordEdit" letters="16" password="1">
+						<Size x="200" y="37"/>
+						<Anchors>
+							<Anchor point="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="275"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString inherits="GlueFontNormal" justifyH="CENTER" text="PASSWORD">
+									<Size>
+										<AbsDimension x="256" y="64"/>
+									</Size>
+									<Anchors>
+										<Anchor point="BOTTOM" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="-23"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Glues\Common\Glue-Tooltip-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="10" right="5" top="4" bottom="9"/>
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+						</Backdrop>
+						<Scripts>
+							<OnTabPressed>
+								AccountLogin_FocusAccountName();
+							</OnTabPressed>
+ 							<OnEscapePressed>
+								AccountLogin_Exit();
+							</OnEscapePressed>
+							<OnEnterPressed>
+								AccountLogin_Login();
+							</OnEnterPressed>
+							<OnEditFocusLost>
+								self:HighlightText(0, 0);
+							</OnEditFocusLost>
+							<OnEditFocusGained>
+								self:HighlightText();
+							</OnEditFocusGained>
+						</Scripts>
+						<FontString inherits="GlueEditBoxFont"/>
+						<TextInsets>
+							<AbsInset left="12" right="5" bottom="5"/>
+						</TextInsets>
+					</EditBox>
+					
+					<Button name="AccountLoginLoginButton" inherits="GlueButtonTemplateBlue" text="LOGIN">
+						<Size x="220" y="45"/>
+						<Anchors>
+							<Anchor point="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="170"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								AccountLogin_Login();
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="AccountLoginExitButton" inherits="GlueButtonSmallTemplateBlue" text="QUIT">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-5" y="29"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								AccountLogin_Exit();
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="OptionsButton" inherits="GlueButtonSmallTemplateBlue" text="OPTIONS">
+						<Anchors>
+							<Anchor point="BOTTOM" relativeTo="AccountLoginExitButton" relativePoint="TOP">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								PlaySound("gsTitleOptions");
+								OptionsSelectFrame:Show();
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="AccountLoginSaveAccountNameText" inherits="GlueFontNormalSmall" text="SAVE_ACCOUNT_NAME">
+									<Anchors>
+										<Anchor point="TOP" relativeTo="AccountLoginLoginButton" relativePoint="BOTTOM">
+											<Offset>
+												<AbsDimension x="10" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<FontHeight>
+										<AbsValue val="10"/>
+									</FontHeight>
+									<Shadow>
+										<Offset>
+											<AbsDimension x="1" y="-1"/>
+										</Offset>
+										<Color r="0" g="0" b="0"/>
+									</Shadow>
+									<Color r="1.0" g="0.78" b="0"/>
+								</FontString>
+								<FontString name="AccountLoginSavePasswordText" inherits="GlueFontNormalSmall" text="SAVE_ACCOUNT_PASSWORD">
+									<Anchors>
+										<Anchor point="TOP" relativeTo="AccountLoginSaveAccountNameText" relativePoint="BOTTOM">
+											<Offset>
+												<AbsDimension x="10" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<FontHeight>
+										<AbsValue val="10"/>
+									</FontHeight>
+									<Shadow>
+										<Offset>
+											<AbsDimension x="1" y="-1"/>
+										</Offset>
+										<Color r="0" g="0" b="0"/>
+									</Shadow>
+									<Color r="1.0" g="0.78" b="0"/>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+					<CheckButton name="AccountLoginSaveAccountName">
+						<Size>
+							<AbsDimension x="20" y="20"/>
+						</Size>
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="AccountLoginSaveAccountNameText" relativePoint="LEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								if ( GetSavedAccountName() ~= "" ) then
+									self:SetChecked(1);
+								else
+									self:SetChecked(0);
+								end 
+							</OnLoad>
+							<OnClick>
+								if ( self:GetChecked() ) then
+									PlaySound("igMainMenuOptionCheckBoxOff");
+									AccountLoginSavePasswordText:Show();
+									AccountLoginSavePassword:Show();
+								else
+									PlaySound("igMainMenuOptionCheckBoxOn");
+									AccountLoginSavePasswordText:Hide();
+									AccountLoginSavePassword:Hide();
+									AccountLoginSavePassword:SetChecked(0);
+								end 
+							</OnClick>
+						</Scripts>
+						<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+						<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+						<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+						<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+						<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+					</CheckButton>
+					<CheckButton name="AccountLoginSavePassword" >
+						<Size>
+							<AbsDimension x="20" y="20"/>
+						</Size>
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="AccountLoginSavePasswordText" relativePoint="LEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								if ( string.find(GetSavedAccountName(),"|") ) then
+									self:SetChecked(1);
+								else
+									self:SetChecked(0);
+								end
+								if ( GetSavedAccountName() ~= "" ) then
+									AccountLoginSavePasswordText:Show();
+									AccountLoginSavePassword:Show();
+								else
+									AccountLoginSavePasswordText:Hide();
+									AccountLoginSavePassword:Hide();
+									self:SetChecked(0);
+								end 
+							</OnLoad>
+							<OnClick>
+								if ( self:GetChecked() and AccountLoginSaveAccountName:GetChecked() ) then
+									PlaySound("igMainMenuOptionCheckBoxOff");
+								elseif ( AccountLoginSaveAccountName:GetChecked() ) then
+									PlaySound("igMainMenuOptionCheckBoxOn");
+								else
+									self:SetChecked(0);
+								end 
+							</OnClick>
+						</Scripts>
+						<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+						<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+						<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+						<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+						<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+					</CheckButton>
+					<Frame name="ServerAlertFrame" hidden="true">
+						<Size>
+							<AbsDimension x="352" y="400"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-130"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="11" right="11" top="11" bottom="11"/>
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="32"/>
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="32"/>
+							</EdgeSize>
+						</Backdrop>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="ServerAlertTitle" inherits="GlueFontNormalLarge" text="SERVER_ALERT_TITLE">
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset>
+												<AbsDimension x="0" y="-20"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<ScrollFrame name="ServerAlertScrollFrame" inherits="GlueScrollFrameTemplate">
+								<Size>
+									<AbsDimension x="300" y="340"/>
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="15" y="-46"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self.scrollBarHideable = 1;
+										GlueScrollFrame_OnScrollRangeChanged(self);
+									</OnLoad>
+									<OnScrollRangeChanged>
+										GlueScrollFrame_OnScrollRangeChanged(self, yrange);
+										if (floor(ServerAlertScrollFrame:GetVerticalScrollRange()) > 0) then
+											self.updated = 1;
+										end
+									</OnScrollRangeChanged>
+								</Scripts>
+								<ScrollChild>
+									<SimpleHTML name="ServerAlertText" hyperlinkFormat="|cff06ff07|H%s|h[%s]|h|r">
+										<Size>
+											<AbsDimension x="300" y="400"/>
+										</Size>
+										<Scripts>
+											<OnHyperlinkClick>
+												LaunchURL(link);
+											</OnHyperlinkClick>
+										</Scripts>
+										<FontString inherits="GlueFontHighlightSmall" spacing="2"/>
+										<FontStringHeader1 inherits="GlueFontNormalLarge" spacing="4"/>
+										<FontStringHeader2 inherits="GlueFontHighlight" spacing="4"/>
+									</SimpleHTML>
+								</ScrollChild>
+							</ScrollFrame>
+						</Frames>
+					</Frame>
+					<Frame name="ChangedOptionsDialog" toplevel="true" setAllPoints="true" enableMouse="true" enableKeyboard="true" frameStrata="DIALOG">
+						<Scripts>
+							<OnShow>
+								ChangedOptionsDialog_OnShow(self);
+							</OnShow>
+							<OnKeyDown>
+								ChangedOptionsDialog_OnKeyDown(self,key);
+							</OnKeyDown>
+						</Scripts>
+						<Frames>
+							<Frame name="ChangedOptionsDialogBackground">
+								<Size>
+									<AbsDimension x="512" y="256"/>
+								</Size>
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="0"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+									<BackgroundInsets>
+										<AbsInset left="11" right="12" top="12" bottom="11"/>
+									</BackgroundInsets>
+									<TileSize>
+										<AbsValue val="32"/>
+									</TileSize>
+									<EdgeSize>
+										<AbsValue val="32"/>
+									</EdgeSize>
+								</Backdrop>
+								<Layers>
+									<Layer level="ARTWORK">
+										<FontString name="ChangedOptionsDialogTitle" inherits="GlueFontNormal" text="CHANGED_OPTIONS_WARNING_TITLE">
+											<Anchors>
+												<Anchor point="TOP">
+													<Offset>
+														<AbsDimension x="0" y="-26"/>
+													</Offset>
+												</Anchor>
+											</Anchors>
+										</FontString>
+										<FontString name="ChangedOptionsDialogText" inherits="TOSFont">
+											<Size>
+												<AbsDimension x="440" y="0"/>
+											</Size>
+											<Anchors>
+												<Anchor point="TOP" relativeTo="ChangedOptionsDialogTitle" relativePoint="BOTTOM">
+													<Offset>
+														<AbsDimension x="0" y="-16"/>
+													</Offset>
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<Frames>
+									<Button name="ChangedOptionsDialogOkayButton" inherits="GlueButtonTemplateBlue" text="OKAY">
+										<Anchors>
+											<Anchor point="BOTTOM" relativePoint="BOTTOM">
+												<Offset>
+													<AbsDimension x="0" y="16"/>
+												</Offset>
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnClick>
+												ChangedOptionsDialog:Hide();
+												AcceptChangedOptionWarnings();
+											</OnClick>
+										</Scripts>
+									</Button>
+								</Frames>
+							</Frame>
+						</Frames>
+					</Frame>
+					<Frame name="KoreanRatings" hidden="true">
+						<Size x="288" y="224"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT"/>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="KoreanRatingsText" inherits="GlueFontHighlightExtraSmall" justifyH="RIGHT" text="RATINGS_TEXT">
+									<Anchors>
+										<Anchor point="TOPRIGHT" x="-10" y="-15"/>
+									</Anchors>
+								</FontString>
+								<Texture name="KoreanRatingsDrugs" file="Interface\Glues\Login\Glues-KoreanRating-Drugs.tga">
+									<Size x="99" y="117"/>
+									<Anchors>
+										<Anchor point="TOPRIGHT" relativeTo="KoreanRatingsText" relativePoint="BOTTOMRIGHT" x="0" y="-5"/>
+									</Anchors>
+									<TexCoords left="0.094" right="0.896" top="0.023" bottom="0.966"/>
+								</Texture>
+								<Texture name="KoreanRatingsViolence" file="Interface\Glues\Login\Glues-KoreanRating-Violence.tga">
+									<Size x="99" y="117"/>
+									<Anchors>
+										<Anchor point="RIGHT" relativeTo="KoreanRatingsDrugs" relativePoint="LEFT" x="-10" y="0"/>
+									</Anchors>
+									<TexCoords left="0.094" right="0.896" top="0.023" bottom="0.966"/>
+								</Texture>
+								<Texture name="KoreanRatingsAge" file="Interface\Glues\Login\Glues-KoreanRating-Age.tga">
+									<Size x="99" y="117"/>
+									<Anchors>
+										<Anchor point="RIGHT" relativeTo="KoreanRatingsViolence" relativePoint="LEFT" x="-10" y="0"/>
+									</Anchors>
+									<TexCoords left="0.109" right="0.88" top="0.039" bottom="0.951"/>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnShow>
+						GlueFrameFadeIn(self, LOGIN_FADE_IN);
+						if ( GetSavedAccountName() == "" ) then
+							AccountLogin_FocusAccountName();
+						else
+							AccountLogin_FocusPassword();
+						end
+	
+						if ( not IsSystemSupported() ) then
+							GlueDialog_Show("SYSTEM_INCOMPATIBLE_SSE");
+						end
+					</OnShow>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				AccountLogin_OnLoad(self);
+			</OnLoad>
+			<OnShow>
+				AccountLogin_OnShow(self);
+			</OnShow>
+			<OnHide>
+				AccountLogin_OnHide(self);
+			</OnHide>
+			<OnKeyDown>
+				AccountLogin_OnKeyDown(key);
+			</OnKeyDown>
+			<OnEvent>
+				AccountLogin_OnEvent(event, ...);
+			</OnEvent>
+		</Scripts>
+		<FogColor r="0.25" g="0.06" b="0.015"/>
+	</ModelFFX>
+</Ui>
