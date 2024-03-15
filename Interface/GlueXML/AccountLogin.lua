@@ -168,9 +168,6 @@ function AccountLogin_Login()
 	local accountName = AccountLoginAccountEdit:GetText()
 	local password = AccountLoginPasswordEdit:GetText()
 
-	PlaySound("gsLogin")
-	DefaultServerLogin(accountName, password)
-
 	if AccountLoginSaveAccountName:GetChecked() then
 		if AccountLoginSavePassword:GetChecked() then
 			SetSavedAccountName(BuildSavedAccountString(accountName, password))
@@ -181,6 +178,9 @@ function AccountLogin_Login()
 		SetSavedAccountName("")
 		AccountLoginPasswordEdit:SetText("")
 	end
+	
+	DefaultServerLogin(accountName, password)
+	PlaySound("gsLogin")
 end
 
 function AccountLogin_Options()
